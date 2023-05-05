@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration = \
+  com.hapgpt.common.eventbus.core.configuration.EventCoreAutoConfiguration

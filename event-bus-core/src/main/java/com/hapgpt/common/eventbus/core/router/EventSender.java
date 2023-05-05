@@ -1,0 +1,24 @@
+package com.hapgpt.common.eventbus.core.router;
+
+import com.hapgpt.common.eventbus.core.arg.EventObject;
+import lombok.extern.slf4j.Slf4j;
+
+import javax.annotation.Resource;
+
+/**
+ * 事件发射器
+ * grant
+ * 5/5/2023 9:08 am
+ **/
+@Slf4j
+public class EventSender implements IEventSender {
+
+    @Resource
+    private IEventConsumer eventConsumer;
+
+    @Override
+    public void push(EventObject eventObject) {
+        log.debug("转发消息 ==> {}", eventObject.getEventId());
+        eventConsumer.receive(eventObject);
+    }
+}

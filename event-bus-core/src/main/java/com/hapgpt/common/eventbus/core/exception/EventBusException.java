@@ -11,6 +11,7 @@ import lombok.Getter;
 public class EventBusException extends RuntimeException {
     private String code;
     private String message;
+    private String detailMsg;
 
     public EventBusException(String code, String message) {
         this.code = code;
@@ -20,5 +21,10 @@ public class EventBusException extends RuntimeException {
     public EventBusException(EventBusErrorEnum val) {
         this.code = val.getCode();
         this.message = val.getMsg();
+    }
+
+    public EventBusException detailMsg(String detailMsg) {
+        this.detailMsg = detailMsg;
+        return this;
     }
 }
