@@ -19,7 +19,7 @@ public class EventSendLogModel extends BaseEventLogModel implements Serializable
     /**
      * 事件发送应用名称
      */
-    private String appName;
+    private String producerName;
     /**
      * 事件发送状态
      */

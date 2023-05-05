@@ -40,5 +40,5 @@ public abstract class BaseEventLogModel implements Serializable {
     /**
      * 重试次数
      */
-    private Integer retryCount;
+    private int retryCount;
 }
