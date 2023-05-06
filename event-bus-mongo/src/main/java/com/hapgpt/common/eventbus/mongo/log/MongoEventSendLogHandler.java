@@ -7,7 +7,6 @@ import com.hapgpt.common.eventbus.mongo.core.EventMongoConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
