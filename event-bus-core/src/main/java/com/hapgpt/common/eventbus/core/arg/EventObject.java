@@ -16,29 +16,29 @@ import java.util.Map;
 @Getter
 @Setter
 @ToString
-public class EventObject extends ApplicationEvent implements Serializable {
+public abstract class EventObject extends ApplicationEvent implements Serializable {
 
     private static final long serialVersionUID = -3627285794800801992L;
     /**
      * 业务类型
      */
-    private String bizType;
+    protected String bizType;
     /**
      * 业务id
      */
-    private String bizId;
+    protected String bizId;
     /**
      * 事件唯一id
      */
-    private String eventId;
+    protected String eventId;
     /**
      * 事件时间(ms)
      */
-    private Long eventTime;
+    protected Long eventTime;
     /**
      * 事件头
      */
-    private Map<String, String> headers;
+    protected Map<String, String> headers;
 
     public EventObject() {
         super("");

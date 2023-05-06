@@ -35,13 +35,13 @@ public class EventMethodInvokeLog implements Serializable {
     /**
      * 开始时间
      */
-    private Long startTime;
+    private long sTime;
     /**
      * 执行时间
      */
-    private Long processTime;
+    private long pTime;
     /**
      * 结束时间
      */
-    private Long endTime;
+    private long eTime;
 }

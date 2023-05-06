@@ -3,9 +3,12 @@ package com.hapgpt.common.eventbus.core;
 import com.alibaba.fastjson.JSON;
 import com.hapgpt.common.eventbus.core.arg.EventConstant;
 import com.hapgpt.common.eventbus.core.arg.EventObject;
+import com.hapgpt.common.eventbus.core.arg.EventSendLogModel;
+import com.hapgpt.common.eventbus.core.arg.EventStatusEnum;
 import com.hapgpt.common.eventbus.core.exception.EventBusErrorEnum;
 import com.hapgpt.common.eventbus.core.exception.EventBusException;
 import com.hapgpt.common.eventbus.core.extend.IEventIdGenerator;
+import com.hapgpt.common.eventbus.core.log.IEventLogDispatcher;
 import com.hapgpt.common.eventbus.core.router.IEventConsumer;
 import com.hapgpt.common.eventbus.core.extend.IEventSendInterceptor;
 import com.hapgpt.common.eventbus.core.router.IEventSender;
@@ -30,6 +33,7 @@ public class EventBus {
     private final IEventSender eventSender;
     private final IEventConsumer eventConsumer;
     private final Collection<IEventSendInterceptor> eventSendInterceptors;
+    private final IEventLogDispatcher eventLogDispatcher;
 
     public void push(EventObject eventObject) {
         if (StringUtils.isEmpty(eventObject.getBizType())) {
@@ -41,22 +45,30 @@ public class EventBus {
         }
         //设置eventId
         eventObject.setEventId(eventIdGenerator.nextId());
-
-        if (eventSendInterceptors != null) {
-            for (IEventSendInterceptor interceptor : eventSendInterceptors) {
-                interceptor.intercept(eventObject, eventSender);
+        EventSendLogModel sendLog = new EventSendLogModel(eventObject);
+        try {
+            if (eventSendInterceptors != null) {
+                for (IEventSendInterceptor interceptor : eventSendInterceptors) {
+                    interceptor.intercept(eventObject, eventSender);
+                }
             }
-        }
 
-        if (eventObject.getHeaders().containsKey(EventConstant.BIZ_LOCAL)) {
-            log.debug("本地消息 ==> {}", JSON.toJSONString(eventObject));
-            eventConsumer.receive(eventObject);
-        } else {
-            if (eventSender == null) {
-                throw new EventBusException(EventBusErrorEnum.BIZ_SENDER_NOT_EMPTY);
+            if (eventObject.getHeaders().containsKey(EventConstant.BIZ_LOCAL)) {
+                log.debug("本地消息 ==> {}", JSON.toJSONString(eventObject));
+                eventConsumer.receive(eventObject);
+            } else {
+                if (eventSender == null) {
+                    throw new EventBusException(EventBusErrorEnum.BIZ_SENDER_NOT_EMPTY);
+                }
+                log.debug("远程消息 ==> {}", JSON.toJSONString(eventObject));
+                eventSender.push(eventObject);
             }
-            log.debug("远程消息 ==> {}", JSON.toJSONString(eventObject));
-            eventSender.push(eventObject);
+        } catch (Exception e) {
+            sendLog.setStatus(EventStatusEnum.FAIL);
+            throw e;
+        } finally {
+            //日志记录
+            eventLogDispatcher.dispatch(sendLog);
         }
     }
 

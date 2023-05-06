@@ -2,8 +2,8 @@ package com.hapgpt.common.eventbus.core.router;
 
 import com.hapgpt.common.eventbus.core.arg.EventObject;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Resource;
 
 /**
  * 事件发射器
@@ -13,7 +13,7 @@ import javax.annotation.Resource;
 @Slf4j
 public class EventSender implements IEventSender {
 
-    @Resource
+    @Autowired
     private IEventConsumer eventConsumer;
 
     @Override

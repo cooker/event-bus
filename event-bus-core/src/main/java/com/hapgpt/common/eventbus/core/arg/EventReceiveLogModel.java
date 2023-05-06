@@ -25,7 +25,7 @@ public class EventReceiveLogModel extends BaseEventLogModel implements Serializa
     /**
      * 事件消费状态
      */
-    private String status;
+    private EventStatusEnum status;
     /**
      * 执行日志
      */

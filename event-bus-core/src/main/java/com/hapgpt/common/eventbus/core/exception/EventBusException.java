@@ -3,7 +3,7 @@ package com.hapgpt.common.eventbus.core.exception;
 import lombok.Getter;
 
 /**
- * @Author: kqyu
+ * @Author: grant
  * @Date: 2023/4/28 12:08
  * @Description:
  */

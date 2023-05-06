@@ -23,11 +23,11 @@ public class EventSendLogModel extends BaseEventLogModel implements Serializable
     /**
      * 事件发送状态
      */
-    private String status;
+    private EventStatusEnum status;
 
     public EventSendLogModel() {
         this.setCreateTime(System.currentTimeMillis());
-        this.setStatus(EventConstant.STATUS_SUCCESS);
+        this.setStatus(EventStatusEnum.SUCCESS);
     }
 
     public EventSendLogModel(EventObject eventObject) {
