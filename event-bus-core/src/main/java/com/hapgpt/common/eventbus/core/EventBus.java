@@ -12,6 +12,7 @@ import com.hapgpt.common.eventbus.core.log.IEventLogDispatcher;
 import com.hapgpt.common.eventbus.core.router.IEventConsumer;
 import com.hapgpt.common.eventbus.core.extend.IEventSendInterceptor;
 import com.hapgpt.common.eventbus.core.router.IEventSender;
+import com.hapgpt.common.eventbus.core.utils.Tools;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -65,6 +66,7 @@ public class EventBus {
             }
         } catch (Exception e) {
             sendLog.setStatus(EventStatusEnum.FAIL);
+            sendLog.setErrMsg(Tools.unwrapThrowable(e));
             throw e;
         } finally {
             //日志记录

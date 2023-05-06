@@ -14,4 +14,9 @@ public interface EventConstant {
      */
     String BIZ_RETRY = "@eventRetryModel";
 
+
+    /**
+     * 异常堆栈大小（默认1024）
+     */
+    String ENV_STACK_DEPTH = "event.bus.stack.depth";
 }

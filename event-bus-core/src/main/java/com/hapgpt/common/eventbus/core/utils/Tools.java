@@ -1,5 +1,7 @@
 package com.hapgpt.common.eventbus.core.utils;
 
+import com.hapgpt.common.eventbus.core.arg.EventConstant;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,14 +14,15 @@ import java.util.stream.Collectors;
 public final class Tools {
     public static String unwrapThrowable(Throwable e) {
         StringBuilder sb = new StringBuilder();
-        unwrapThrowable(e, sb);
+        String stackDepth = System.getProperty(EventConstant.ENV_STACK_DEPTH);
+        unwrapThrowable(e, sb, stackDepth == null ? 1024 : Integer.parseInt(stackDepth));
         return sb.toString();
     }
 
-    public static void unwrapThrowable(Throwable e, StringBuilder sb) {
+    public static void unwrapThrowable(Throwable e, StringBuilder sb, int stackDepth) {
         sb.append(String.format("\n%s", e));
         //最大打印4k的异常
-        if (sb.length() > 1024) {
+        if (sb.length() > stackDepth) {
             return;
         }
         StackTraceElement[] trace = e.getStackTrace();
@@ -39,7 +42,7 @@ public final class Tools {
         }
         Throwable ourCause = e.getCause();
         if (ourCause != null) {
-            unwrapThrowable(ourCause, sb);
+            unwrapThrowable(ourCause, sb, stackDepth);
         }
     }
 
