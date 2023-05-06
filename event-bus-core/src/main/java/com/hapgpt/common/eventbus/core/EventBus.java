@@ -47,6 +47,7 @@ public class EventBus {
         //设置eventId
         eventObject.setEventId(eventIdGenerator.nextId());
         EventSendLogModel sendLog = new EventSendLogModel(eventObject);
+        sendLog.setProducerName(environment.resolvePlaceholders("${spring.application.name:app}"));
         try {
             if (eventSendInterceptors != null) {
                 for (IEventSendInterceptor interceptor : eventSendInterceptors) {

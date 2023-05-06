@@ -14,6 +14,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
@@ -30,6 +31,8 @@ public class SpringEventListenerAspect {
 
     @Autowired
     private IEventLogDispatcher eventLogDispatcher;
+    @Autowired
+    private Environment environment;
 
     @Around("@annotation(org.springframework.context.event.EventListener) && args(arg)")
     public Object exec(ProceedingJoinPoint joinPoint, EventObject arg) throws Throwable {
@@ -40,6 +43,7 @@ public class SpringEventListenerAspect {
             receiveLog = JSON.parseObject(retryModelJson, EventReceiveLogModel.class);
         } else {
             receiveLog = new EventReceiveLogModel(arg);
+            receiveLog.setConsumerName(environment.resolvePlaceholders("${spring.application.name:app}"));
         }
         EventMethodInvokeLog methodInvokeLog = new EventMethodInvokeLog();
         methodInvokeLog.setIsExecuted(true);

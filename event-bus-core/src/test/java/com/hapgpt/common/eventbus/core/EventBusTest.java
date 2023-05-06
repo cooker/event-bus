@@ -7,9 +7,14 @@ import com.hapgpt.common.eventbus.core.configuration.EventCoreAutoConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,6 +33,7 @@ public class EventBusTest {
     public void init() {
         applicationContext = new AnnotationConfigApplicationContext(EventCoreAutoConfiguration.class,
                 EventReceiveLogHandlerConfig.class, EventBusTest.class);
+        applicationContext.registerBean(PropertySourcesPlaceholderConfigurer.class, BeanDefinitionBuilder.genericBeanDefinition(PropertySourcesPlaceholderConfigurer.class));
         applicationContext.registerShutdownHook();
     }
 

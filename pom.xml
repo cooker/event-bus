@@ -13,7 +13,8 @@
 	<modules>
 		<module>event-bus-core</module>
 		<module>event-bus-rabbitmq</module>
-	</modules>
+        <module>event-bus-mongo</module>
+    </modules>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
