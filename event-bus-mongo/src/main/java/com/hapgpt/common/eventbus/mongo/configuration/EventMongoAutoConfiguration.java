@@ -1,6 +1,8 @@
 package com.hapgpt.common.eventbus.mongo.configuration;
 
+import com.hapgpt.common.eventbus.core.log.IEventReceiveLogHandler;
 import com.hapgpt.common.eventbus.core.log.IEventSendLogHandler;
+import com.hapgpt.common.eventbus.mongo.log.MongoEventReceiveLogHandler;
 import com.hapgpt.common.eventbus.mongo.log.MongoEventSendLogHandler;
 import org.springframework.context.annotation.Bean;
 
@@ -13,5 +15,10 @@ public class EventMongoAutoConfiguration {
     @Bean
     public IEventSendLogHandler eventSendLogHandler(){
         return new MongoEventSendLogHandler();
+    }
+
+    @Bean
+    public IEventReceiveLogHandler eventReceiveLogHandler() {
+        return new MongoEventReceiveLogHandler();
     }
 }

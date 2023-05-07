@@ -43,7 +43,7 @@ public class SpringEventListenerAspect {
             receiveLog = JSON.parseObject(retryModelJson, EventReceiveLogModel.class);
         } else {
             receiveLog = new EventReceiveLogModel(arg);
-            receiveLog.setConsumerName(environment.resolvePlaceholders("${spring.application.name:app}"));
+            receiveLog.setConsumerName(environment.resolvePlaceholders(EventConstant.SPRING_APP_NAME));
         }
         EventMethodInvokeLog methodInvokeLog = new EventMethodInvokeLog();
         methodInvokeLog.setIsExecuted(true);

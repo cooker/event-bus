@@ -4,9 +4,9 @@ import com.hapgpt.common.eventbus.core.arg.EventReceiveLogModel;
 import com.hapgpt.common.eventbus.core.extend.IEventIdGenerator;
 import com.hapgpt.common.eventbus.core.log.IEventReceiveLogHandler;
 import com.hapgpt.common.eventbus.mongo.core.EventMongoConstant;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -16,9 +16,9 @@ import java.time.format.DateTimeFormatter;
  * @Description:
  */
 public class MongoEventReceiveLogHandler implements IEventReceiveLogHandler {
-    @Autowired
+    @Resource
     private MongoTemplate mongoTemplate;
-    @Autowired
+    @Resource
     private IEventIdGenerator eventIdGenerator;
 
     @Override
@@ -26,7 +26,7 @@ public class MongoEventReceiveLogHandler implements IEventReceiveLogHandler {
         mongoTemplate.insert(eventLog, getCollectionByEventId(eventLog.getEventId()));
     }
 
-    public static String getCollectionByEventId(String eventId) {
+    public String getCollectionByEventId(String eventId) {
         LocalDateTime localDateTime = eventIdGenerator.getLocalDateTime(eventId);
         return EventMongoConstant.RECEIVE_LOG_COLLECTION + "_" + localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
     }
