@@ -5,11 +5,12 @@ import com.hapgpt.common.eventbus.core.arg.EventConstant;
 import com.hapgpt.common.eventbus.core.arg.EventObject;
 import com.hapgpt.common.eventbus.core.router.IEventSender;
 import com.hapgpt.common.eventbus.rabbitmq.core.EventRabbitmqConstant;
+import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
@@ -23,11 +24,11 @@ import java.util.HashMap;
  **/
 public class RabbitmqEventSender implements IEventSender {
 
-    @Resource
+    @Autowired
     private RabbitTemplate rabbitTemplate;
     @Resource
-    private RabbitAdmin rabbitAdmin;
-    @Resource
+    private AmqpAdmin rabbitAdmin;
+    @Autowired
     private Environment environment;
     @Value("${spring.profiles.active:dev}")
     private String env;
@@ -49,7 +50,7 @@ public class RabbitmqEventSender implements IEventSender {
 
         rabbitAdmin.declareExchange(new TopicExchange(exchange));
         rabbitAdmin.declareQueue(new Queue(topic));
-        rabbitAdmin.declareBinding(new Binding(topic, Binding.DestinationType.EXCHANGE, exchange, routingKey, new HashMap<>()));
+        rabbitAdmin.declareBinding(new Binding(topic, Binding.DestinationType.QUEUE, exchange, routingKey, new HashMap<>()));
         rabbitTemplate.convertAndSend(exchange, routingKey, JSON.toJSONString(eventObject));
     }
 }
