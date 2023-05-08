@@ -3,15 +3,16 @@ package com.hapgpt.common.eventbus.rabbitmq;
 import com.hapgpt.common.eventbus.core.EventBus;
 import com.hapgpt.common.eventbus.core.configuration.EventCoreAutoConfiguration;
 import com.hapgpt.common.eventbus.rabbitmq.arg.AEventObject;
-import com.hapgpt.common.eventbus.rabbitmq.config.RabbitConfig;
 import com.hapgpt.common.eventbus.rabbitmq.configuration.EventRabbitmqAutoConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 import java.util.concurrent.TimeUnit;
@@ -22,7 +23,6 @@ import java.util.concurrent.TimeUnit;
  * @Description:
  */
 @Slf4j
-@Configuration
 public class EventBusTest {
 
     AnnotationConfigApplicationContext applicationContext;
@@ -33,15 +33,21 @@ public class EventBusTest {
                 EventRabbitmqAutoConfiguration.class, RabbitAutoConfiguration.class,
                 EventBusTest.class);
         applicationContext.registerBean(PropertySourcesPlaceholderConfigurer.class, BeanDefinitionBuilder.genericBeanDefinition(PropertySourcesPlaceholderConfigurer.class));
+        applicationContext.start();
         applicationContext.registerShutdownHook();
     }
 
     @Test
     public void pushEvent() throws InterruptedException {
         AEventObject event = new AEventObject();
-
+        applicationContext.publishEvent(new ApplicationStartedEvent(new SpringApplication(), new String[0], applicationContext));
         applicationContext.getBean(EventBus.class).push(event);
-        TimeUnit.SECONDS.sleep(5);
+        TimeUnit.SECONDS.sleep(15);
+    }
+
+    @EventListener
+    public void sa(AEventObject eventObject) {
+        throw new RuntimeException("sa");
     }
 
 }

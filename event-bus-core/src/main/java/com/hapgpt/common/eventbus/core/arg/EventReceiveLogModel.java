@@ -45,10 +45,6 @@ public class EventReceiveLogModel extends BaseEventLogModel implements Serializa
         this.setBizId(eventObject.getBizId());
     }
 
-    public void setInvokeLogItems(List<EventMethodInvokeLog> invokeLogItems) {
-        throw new UnsupportedOperationException();
-    }
-
     public void addLogItem(EventMethodInvokeLog item){
         this.invokeLogItems.add(item);
     }

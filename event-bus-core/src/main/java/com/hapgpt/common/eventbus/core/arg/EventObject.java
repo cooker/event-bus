@@ -47,10 +47,6 @@ public abstract class EventObject extends ApplicationEvent implements Serializab
         this.headers.put(EventConstant.BIZ_CLASS, this.getClass().getName());
     }
 
-    public void setHeaders(Map<String, String> headers) {
-        throw new UnsupportedOperationException();
-    }
-
     public void put(String key, String value) {
         headers.put(key, value);
     }
