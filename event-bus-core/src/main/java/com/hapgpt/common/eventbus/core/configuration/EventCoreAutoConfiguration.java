@@ -18,6 +18,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.Environment;
 
@@ -36,7 +37,6 @@ public class EventCoreAutoConfiguration {
     public SpringEventListenerAspect springEventListenerAop() {
         return new SpringEventListenerAspect();
     }
-
 
     @Bean(destroyMethod = "shutdown")
     public IEventLogDispatcher eventLogDispatcher(ObjectProvider<IEventSendLogHandler> eventSendLogHandler,

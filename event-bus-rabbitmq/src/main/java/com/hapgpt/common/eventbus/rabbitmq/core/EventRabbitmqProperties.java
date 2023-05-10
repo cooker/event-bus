@@ -14,6 +14,14 @@ import java.util.List;
 public class EventRabbitmqProperties {
     List<RabbitmqConsumer> consumers;
 
+    /**
+     * 默认消费者数
+     */
+    private Integer coreThread = 1;
+    /**
+     * 默认重试次数
+     */
+    private Integer coreRetryTimes = 3;
 
 
     @Data

@@ -3,6 +3,7 @@ package com.hapgpt.common.eventbus.rabbitmq;
 import com.hapgpt.common.eventbus.core.EventBus;
 import com.hapgpt.common.eventbus.core.configuration.EventCoreAutoConfiguration;
 import com.hapgpt.common.eventbus.rabbitmq.arg.AEventObject;
+import com.hapgpt.common.eventbus.rabbitmq.arg.BEventObject;
 import com.hapgpt.common.eventbus.rabbitmq.configuration.EventRabbitmqAutoConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
@@ -41,7 +42,8 @@ public class EventBusTest {
     public void pushEvent() throws InterruptedException {
         AEventObject event = new AEventObject();
         applicationContext.publishEvent(new ApplicationStartedEvent(new SpringApplication(), new String[0], applicationContext));
-        applicationContext.getBean(EventBus.class).push(event);
+//        applicationContext.getBean(EventBus.class).push(event);
+        applicationContext.getBean(EventBus.class).push(new BEventObject());
         TimeUnit.SECONDS.sleep(15);
     }
 

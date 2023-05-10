@@ -1,6 +1,8 @@
 package com.hapgpt.common.eventbus.rabbitmq.router;
 
+import com.hapgpt.common.eventbus.core.exception.EventListenerNotFoundException;
 import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
@@ -19,6 +21,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.hapgpt.common.eventbus.rabbitmq.utils.MQUtils.getStackTraceAsString;
 
 @Slf4j
 public class RetryConsumerContainer extends SimpleMessageListenerContainer {
@@ -41,7 +45,8 @@ public class RetryConsumerContainer extends SimpleMessageListenerContainer {
         this.retryTimes = retryTimes;
     }
 
-    protected void doInvokeListener(ChannelAwareMessageListener listener, Channel channel, Object data) {
+    @Override
+    protected void doInvokeListener(ChannelAwareMessageListener listener, Channel channel, Message data) {
         Message message = (Message) data; // 不存在list 类型数据
         RabbitResourceHolder resourceHolder = null;
         Channel channelToUse = channel;
@@ -77,6 +82,7 @@ public class RetryConsumerContainer extends SimpleMessageListenerContainer {
             try {
                 listener.onMessage(message, channelToUse);
             } catch (Exception e) {
+                log.debug("MQ 消费失败 {}", message, e);
                 MessageProperties properties = message.getMessageProperties();
                 Map<String, Object> headers = properties.getHeaders();
                 if (headers == null) {
@@ -86,13 +92,22 @@ public class RetryConsumerContainer extends SimpleMessageListenerContainer {
                 int retryCount = headers.get("x-retry-times") == null ? 0 : (Integer) headers.get("x-retry-times");
                 headers.put("x-retry-times", retryCount + 1);
                 log.warn("[MQRetry] message {}, retry {}", new String(message.getBody(), "UTF-8"), retryCount);
-                if (retryCount >= retryTimes) {
+                headers.put("x-exception-stacktrace", getStackTraceAsString(e));
+                headers.put("x-exception-message", e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
+
+                if (retryCount >= retryTimes || e instanceof EventListenerNotFoundException) {
                     // 重试次数大于阈值，则自动加入到失败补偿队列
                     String failedExchangeName = exchangeName + ".FAILED";
+                    channel.exchangeDeclare(failedExchangeName, BuiltinExchangeType.TOPIC);
+                    channel.queueDeclare(queueName + ".FAILED", true, false, false, new HashMap<>());
+                    channel.queueBind(queueName + ".FAILED", failedExchangeName, queueName);
                     channel.basicPublish(failedExchangeName, queueName, createOverrideProperties(properties, headers), message.getBody());
                 } else {
                     // 重试次数小于阈值，则加入到重试队列
                     String retryExchangeName = exchangeName + ".RETRY";
+                    channel.exchangeDeclare(retryExchangeName, BuiltinExchangeType.TOPIC);
+                    channel.queueDeclare(queueName + ".RETRY", true, false, false, new HashMap<>());
+                    channel.queueBind(queueName + ".RETRY", retryExchangeName, queueName);
                     channel.basicPublish(retryExchangeName, queueName, createOverrideProperties(properties, headers), message.getBody());
                 }
             }
