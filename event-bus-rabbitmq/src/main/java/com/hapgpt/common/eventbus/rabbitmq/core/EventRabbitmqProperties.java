@@ -27,6 +27,9 @@ public class EventRabbitmqProperties {
     @Data
     public static class RabbitmqConsumer {
         private Integer thread;
+        private Integer reetryTimes = 3;
+        private String exchangeName;
         private String queueName;
+        private String routingKey;
     }
 }

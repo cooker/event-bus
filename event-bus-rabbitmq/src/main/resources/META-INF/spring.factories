@@ -1,2 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration = \
   com.hapgpt.common.eventbus.rabbitmq.configuration.EventRabbitmqAutoConfiguration
+org.springframework.context.ApplicationListener = \
+  com.hapgpt.common.eventbus.rabbitmq.listener.EventRabbitmqListener

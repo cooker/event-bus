@@ -1,4 +1,4 @@
-package com.hapgpt.common.eventbus.rabbitmq.runner;
+package com.hapgpt.common.eventbus.rabbitmq.listener;
 
 import com.hapgpt.common.eventbus.core.arg.EventConstant;
 import com.hapgpt.common.eventbus.core.router.IEventConsumer;
@@ -23,7 +23,7 @@ import javax.annotation.Resource;
  * @Description:
  */
 @Slf4j
-public class EventRabbitmqRunner implements ApplicationListener<ApplicationStartedEvent> {
+public class EventRabbitmqListener implements ApplicationListener<ApplicationStartedEvent> {
 
     static volatile boolean isExec = false;
     @Resource
@@ -53,7 +53,7 @@ public class EventRabbitmqRunner implements ApplicationListener<ApplicationStart
                     }
                 });
                 retryConsumerContainer.start();
-                log.info("启动MQ默认消费者{}：{}", i, queue);
+                log.info("启动MQ默认消费者{}：{}", i+1, queue);
             }
             isExec = true;
         }
